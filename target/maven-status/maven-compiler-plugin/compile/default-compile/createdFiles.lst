@@ -1,0 +1,8 @@
+entity\User.class
+service\impl\UserServiceimpl.class
+dao\impl\UserDaoimpl.class
+service\UserService.class
+dao\UserDao.class
+common\BaseDao.class
+common\BaseService.class
+action\UserAction.class

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-29 10:41:32 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="entity.User" table="user" catalog="young">
+        <id name="userid" type="java.lang.Integer">
+            <column name="userid" />
+            <!-- 必须跟数据库对应 -->
+            <generator class="increment" />
+        </id>
+        <property name="userName" type="string">
+            <column name="userName" length="10" />
+        </property>
+        <property name="pwd" type="string">
+            <column name="pwd" length="10" />
+        </property>
+    </class>
+</hibernate-mapping>

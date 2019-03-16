@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+    http://www.springframework.org/schema/aop   
+    http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+    http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
+	default-autowire="byName">
+
+	<context:annotation-config />
+	<!-- spring 扫描路径，注意当前工程只需要扫描dao和service，srpingmvc或者struts2注解才有变化 -->
+	<context:component-scan
+		base-package="dao,service" />
+
+
+<bean id="dataSource"
+        class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName"
+            value="com.mysql.jdbc.Driver">
+        </property>
+        <property name="url"
+            value="jdbc:mysql://127.0.0.1:3306/young">
+        </property>
+        <property name="username" value="root"></property>
+        <property name="password" value="admin"></property>
+    </bean>
+
+	<!-- 配置hibernate 相关属性 -->
+    <bean id="sessionFactory"
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <!-- 注入连接池 -->
+        <property name="dataSource" ref="dataSource"></property>
+
+        <property name="hibernateProperties" >
+            <props>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.format_sql">true </prop>  
+
+                <!--它包含4个属性: 
+                * create : 会根据你的model类来生成表,但是每次运行都会删除上一次的表,重新生成表,哪怕2次没有任何改变 
+                * create-drop : 根据model类生成表,但是sessionFactory一关闭,表就自动删除 
+                * update : 最常用的属性，也根据model类生成表,即使表结构改变了,表中的行仍然存在,不会删除以前的行 
+                * validate : 只会和数据库中的表进行比较,不会创建新表,但是会插入新值  -->
+
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+        <!-- hibernate 映射文件 -->
+        <property name="mappingDirectoryLocations">
+            <list>
+                <value>classpath:entity/</value>
+            </list>
+        </property>
+        <!-- 
+            mappingResources：指定classpath下具体映射文件名 
+            mappingLocations：可以指定任何文件路径
+            mappingDirectoryLocations：指定映射的文件路径
+            mappingJarLocations：指定加载的映射文件在jar文件中 
+         -->
+
+    </bean>
+
+	<!-- 配置声明式事务管理（采用注解的方式） -->
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 开启注解事务 -->
+	<tx:annotation-driven
+		transaction-manager="txManager" />
+</beans>
